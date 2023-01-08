@@ -53,23 +53,6 @@ const authorize = async function(req,res, next){
     }
 }
 
-const authForParams = async function (req, res, next){
-    try {
-        let clotheId = req.params.clotheId;
-        if(!clotheId || !isValidObjectId(clotheId)){
-            return res.status(400).send({ status: false, message: "Provide a valid clothe in path params." })
-        }
-        let clothe = await clotheModel.findById(clotheId)
-        if(!clothe){
-            return res.status(404).send({ status: false, message: "clotheId not present." })
-        }
-        if(clothe.userId.toString() !== req.decodedToken.userId){
-            return res.status(403).send({ status: false, message: "You are not authorized to access this clothe." })
-        }
 
-    } catch (err) {
-        return res.status(500).send({ status: false, message: err.message })
-    }
-}
 
-module.exports = { authenticate, authorize, authForParams }
+module.exports = { authenticate, authorize }   // --> exporting the functions

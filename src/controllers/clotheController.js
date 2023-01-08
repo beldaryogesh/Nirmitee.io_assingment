@@ -14,6 +14,7 @@ const {
 } = require("../validations/validator");
 const { isValidObjectId } = require("mongoose");
 
+//--------------------------------------Create Clothe APIs-----------------------------------//
 const createClotes = async function (req, res) {
   try {
     const data = req.body;
@@ -132,6 +133,7 @@ const createClotes = async function (req, res) {
   }
 };
 
+//--------------------------------------Get Clothe APIs-----------------------------------//
 const getClothes = async function (req, res) {
   try {
     const data = req.body;
@@ -325,12 +327,13 @@ const getClothes = async function (req, res) {
   }
 };
 
+//--------------------------------------Update Clothe APIs-----------------------------------//
 const updateClotheById = async function (req, res) {
   try {
     let clotheId = req.params.clotheId;
     let data = req.body;
     let files = req.files;
-    // ------------------------------------All validation-----------------------------------------------
+    // -----------------------------------validation-----------------------------------------//
 
     if (!isValidObjectId(clotheId)) {
       return res
@@ -366,7 +369,7 @@ const updateClotheById = async function (req, res) {
     } = data;
     let bodyFromReq = JSON.parse(JSON.stringify(data));
     let newObj = {};
-    // --------------------------------------clothe validation------------------------------//
+    // -----------------------------clothe Name Update and validation---------------------------//
     if (bodyFromReq.hasOwnProperty("clotheName")) {
       if (!isValid(clotheName)) {
         return res
@@ -523,7 +526,7 @@ const updateClotheById = async function (req, res) {
 
     const updateClothe = await clotheModel.findByIdAndUpdate(
       { _id: clotheId },
-      { $set: newObj },
+      { $set: newObj },    // ---> update data
       { new: true }
     );
     return res
@@ -538,6 +541,7 @@ const updateClotheById = async function (req, res) {
   }
 };
 
+//--------------------------------------Delete Clothe APIs-----------------------------------//
 const deleteClotheById = async function (req, res) {
   try {
     let clotheId = req.params.clotheId;
@@ -567,6 +571,6 @@ const deleteClotheById = async function (req, res) {
 module.exports = {
   createClotes,
   getClothes,
-  updateClotheById,
+  updateClotheById,    // ---> exports APIs
   deleteClotheById,
 };
