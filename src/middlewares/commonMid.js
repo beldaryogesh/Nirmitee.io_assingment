@@ -36,7 +36,10 @@ const authenticate = async function (req, res, next){
 const authorize = async function(req,res, next){
     try {
         let userId = req.body.userId;
-        if(!userId || !isValidObjectId(userId)){
+        if(!userId){
+            return res.status(400).send({ status: false, message: "please Provide userId." })
+        }
+        if(!isValidObjectId(userId)){
             return res.status(400).send({ status: false, message: "Provide a valid userId." })
         }
         let user = await userModel.findById(userId)
