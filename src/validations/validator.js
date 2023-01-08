@@ -1,8 +1,8 @@
 const aws = require("aws-sdk")
 
 aws.config.update({
-  accessKeyId: "AKIAY3L35MCRVFM24Q7U",
-  secretAccessKey: "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",
+  accessKeyId: "AKIAY3L35MCRZNIRGT6N",
+  secretAccessKey: "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",
   region: "ap-south-1"
 })
 
@@ -15,9 +15,9 @@ let uploadFile = async (file) => {
     var uploadParams = {
       ACL: "public-read",
       Bucket: "classroom-training-bucket", 
-      Key: "project5/" + file.originalname, 
+      Key: "Nirmitee/" + file.originlname, 
       Body: file.buffer
-    }
+    } 
     s3.upload(uploadParams, function (err, data) {
       if (err) {
         return reject({ "error": err })
@@ -27,15 +27,44 @@ let uploadFile = async (file) => {
     })
   })
 }
+/*
+const aws = require("aws-sdk");
 
+exports.uploadFile = async (file) => {
+  aws.config.update({
+    accessKeyId: "AKIAY3L35MCRZNIRGT6N",
+    secretAccessKey: "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",
+    region: "ap-south-1",
+  });
+
+  return new Promise((resolve, reject) => {
+    const s3 = new aws.S3({ apiVersion: "2006-03-01" });
+
+    const uploadParams = {
+      ACL: "public-read",
+      Bucket: "classroom-training-bucket",
+      Key: `"abc/" + ${file.originalname}`,
+      Body: file.buffer,
+    };
+
+    s3.upload(uploadParams, (err, data) => {
+      if (err) {
+        // eslint-disable-next-line prefer-promise-reject-errors
+        return reject({ error: err });
+      }
+      return resolve(data.Location);
+    });
+  });
+};
+*/
 const isValidFiles = function (files) {
-  if (files && files.length > 0) return true;
+  if (files && files.length > 0) {
+    return true;
+  }else {
+    return "please provide clothe image"
+  }
 };
 
-const isValidImg = (img) => {
-  const reg = /image\/png|image\/jpeg|image\/jpg/;
-  return reg.test(img)
-}
 
 const isValidRequestBody = function (reqbody) {
   if (!Object.keys(reqbody).length) {
@@ -64,7 +93,6 @@ let sizeRegex = /^(S|XS|M|X|L|XXL|XL)$/
 module.exports = {
   uploadFile,
   isValidFiles,
-  isValidImg,
   isValidRequestBody,
   isValid,
   nameRegex,

@@ -1,18 +1,16 @@
 const clotheModel = require("../models/clotheModel");
 const user = require("../models/userModel");
 const mongoose = require("mongoose");
-
+const { isValidObjectId } = require("mongoose");
 const {
   uploadFile,
-  isValidFiles,
-  isValidImg,
   isValidRequestBody,
   isValid,
   nameRegex,
   departmentRegex,
   sizeRegex,
 } = require("../validations/validator");
-const { isValidObjectId } = require("mongoose");
+
 
 //--------------------------------------Create Clothe APIs-----------------------------------//
 const createClotes = async function (req, res) {
@@ -24,6 +22,9 @@ const createClotes = async function (req, res) {
         status: false,
         message: "Provide the data in request body for clothe creation.",
       });
+    }
+    if (!(files && files.length)) {
+      return next(new ErrorHandler(400, "Please upload image of the clothe"));
     }
     let { clotheName, style, department, price, color, size, description } =
       data;
@@ -122,6 +123,11 @@ const createClotes = async function (req, res) {
         message: "please Enter clothe discription for clothe creation ",
       });
     }
+    // -------------------------------files validation------------------------------------//
+
+    let url = await uploadFile(files[0]);
+    data['clotheImage'] = url 
+
     const clothes = await clotheModel.create(data);
     return res.status(201).send({
       status: true,
@@ -359,7 +365,6 @@ const updateClotheById = async function (req, res) {
     }
     let {
       clotheName,
-      clotheImage,
       style,
       department,
       price,
@@ -381,14 +386,7 @@ const updateClotheById = async function (req, res) {
           status: false,
           message: "clotheName should contain alphabets only.",
         });
-      const clotheNameData = await clotheModel.findOne({
-        clotheName: clotheName,
-      });
-      if (clotheNameData)
-        return res
-          .status(400)
-          .send({ status: false, msg: `${clotheName} is already present` });
-    }
+      }
     newObj["clotheName"] = clotheName;
     // --------------------------------------clothe image------------------------------//
     let uploadedFileURL;
@@ -411,13 +409,6 @@ const updateClotheById = async function (req, res) {
           status: false,
           message: "style should contain alphabets only.",
         });
-      const styleData = await clotheModel.findOne({
-        style: style,
-      });
-      if (styleData)
-        return res
-          .status(400)
-          .send({ status: false, msg: `${style} is already present` });
     }
     newObj["style"] = style;
     // --------------------------------------department validation------------------------------//
@@ -433,13 +424,7 @@ const updateClotheById = async function (req, res) {
           status: false,
           message: "please provide department (Man|Human|Boy|Girl) only.",
         });
-      const departmentData = await clotheModel.findOne({
-        department: department,
-      });
-      if (departmentData)
-        return res
-          .status(400)
-          .send({ status: false, msg: `${department} is already present` });
+     
     }
     newObj["department"] = department;
 
@@ -456,14 +441,7 @@ const updateClotheById = async function (req, res) {
           status: false,
           message: "please provide numarical value only.",
         });
-      const priceData = await clotheModel.findOne({
-        price: price,
-      });
-      if (priceData)
-        return res
-          .status(400)
-          .send({ status: false, msg: `${price} is already present` });
-    }
+       }
     newObj["price"] = price;
 
     // --------------------------------------color validation------------------------------//
@@ -479,14 +457,7 @@ const updateClotheById = async function (req, res) {
           status: false,
           message: "color should contain alphabets only.",
         });
-      const colorData = await clotheModel.findOne({
-        color: color,
-      });
-      if (colorData)
-        return res
-          .status(400)
-          .send({ status: false, msg: `${color} is already present` });
-    }
+     }
     newObj["color"] = color;
     // --------------------------------------size validation------------------------------//
     if (bodyFromReq.hasOwnProperty("size")) {
@@ -498,14 +469,7 @@ const updateClotheById = async function (req, res) {
           status: false,
           message: "Enter a valid size S or XS or M or X or L or XXL or XL ",
         });
-      const sizeData = await clotheModel.findOne({
-        size: size,
-      });
-      if (sizeData)
-        return res
-          .status(400)
-          .send({ status: false, msg: `${size} is already present` });
-    }
+        }
     newObj["size"] = size;
     // --------------------------------------discription validation------------------------------//
     if (bodyFromReq.hasOwnProperty("description")) {
@@ -514,13 +478,6 @@ const updateClotheById = async function (req, res) {
           .status(400)
           .send({ status: false, msg: "Provide the description" });
       }
-      const descriptionData = await clotheModel.findOne({
-        description: description,
-      });
-      if (descriptionData)
-        return res
-          .status(400)
-          .send({ status: false, msg: `${description} is already present` });
     }
     newObj["description"] = description;
 

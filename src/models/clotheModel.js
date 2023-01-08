@@ -9,6 +9,7 @@ const clotheSchema = new mongoose.Schema(
         },
         clotheImage: {
             type: String,
+            require : true,
             trim: true
         },
         style: {
