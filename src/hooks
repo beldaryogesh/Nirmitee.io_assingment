@@ -1,0 +1,14 @@
+customer_schema.pre("insertMany", async function (next, doc) {
+  try {
+    if(doc?.length){
+      for(let u of doc){
+        if(u?.password){
+          u.password = await bcrypt.hashSync(u.password, 10)
+        }
+      }
+    }
+    next()
+  } catch (error) {
+    next(error);
+  }
+});
