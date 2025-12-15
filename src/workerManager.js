@@ -31,3 +31,19 @@ export function runWorker(workerData) {
     throw error;
   }
 }
+
+
+// in controller 
+export const callApiForKiran = async function (req, res) {
+    try {
+      let result = await runWorker({
+        type: 'API',
+        vendorId: globalConstant.VENDORID.KIRANID,
+        parameterFor: siteConstant.mappingFor.Solitaire
+      });
+      return res.status(200).json(result)
+    } catch (err) {
+      console.error("Error processing diamonds:", err);
+      res.status(500).json({ error: err.message });
+    }
+}
