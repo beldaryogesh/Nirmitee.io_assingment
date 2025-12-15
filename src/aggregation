@@ -1,0 +1,38 @@
+return await Product.aggregate([
+      { $skip: (page - 1) * limit },
+      { $limit: limit },
+      {
+        $lookup: {
+          from: 'categories',
+          localField: 'levelId',
+          foreignField: '_id',
+          as: 'categoryDetails'
+        }
+      },
+      {
+        $lookup: {
+          from: 'attributecodes',
+          localField: 'at_code',
+          foreignField: '_id',
+          as: 'atCodeDetails'
+        }
+      },
+      {
+        $addFields: {
+          category: { $arrayElemAt: ['$categoryDetails.title', 0] },
+          at_code: { $arrayElemAt: ['$atCodeDetails.at_code', 0] }
+        }
+      },
+      {
+        $project : {
+          _id : 0,
+          atCodeDetails : 0,
+          insertedBy : 0,
+          status : 0,
+          updatedAt : 0,
+          insertedBy : 0, 
+          createdAt : 0,
+          categoryDetails : 0
+        }
+      }
+    ]);
